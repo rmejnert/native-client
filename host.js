@@ -47,16 +47,7 @@ function observe (request, push, done) {
     };
     const script = new vm.Script(request.script);
     const context = new vm.createContext(sandbox);
-    try {
-      script.runInContext(context);
-    }
-    catch (e) {
-      push({
-        type: 'sandbox',
-        error: e.message
-      });
-      close();
-    }
+    script.runInContext(context);
   }
   else {
     push({
