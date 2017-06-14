@@ -40,8 +40,8 @@ function exists (directory, callback) {
   one();
 }
 
-var dir = path.join(share, 'com.add0n.node');
-var name = 'com.add0n.node';
+var dir = path.join(share, 'com.add0n.stylus');
+var name = 'com.add0n.stylus';
 var ids = require('./config.js').ids;
 
 function manifest (root, type, callback) {
@@ -95,7 +95,6 @@ function application (callback) {
       }
       fs.createReadStream('host.js').pipe(fs.createWriteStream(path.join(dir, 'host.js')));
       fs.createReadStream('messaging.js').pipe(fs.createWriteStream(path.join(dir, 'messaging.js')));
-      fs.createReadStream('follow-redirects.js').pipe(fs.createWriteStream(path.join(dir, 'follow-redirects.js')));
       callback();
     });
   });

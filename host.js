@@ -1,379 +1,75 @@
 'use strict';
 
-function lazyRequire (lib, name) {
-  if (!name) {
-    name = lib;
-  }
-  global.__defineGetter__(name, function () {
-    return require(lib);
-  });
-  return global[name];
-}
-
-var spawn = require('child_process').spawn;
-var fs = lazyRequire('fs');
-var net = lazyRequire('net');
-var os = lazyRequire('os');
-var path = lazyRequire('path');
-var http = lazyRequire('./follow-redirects').http;
-var https = lazyRequire('./follow-redirects').https;
-
-var server, files = [], sprocess = [];
-
 var config = {
-  version: '0.3.8'
+  version: '0.1.0'
 };
 // closing node when parent process is killed
 process.stdin.resume();
-process.stdin.on('end', () => {
-  files.forEach(file => {
-    try {
-      fs.unlink(file);
-    }
-    catch (e) {}
-  });
-  sprocess.forEach(ps => ps.kill());
-  try {
-    server.close();
-    server.unref();
-  }
-  catch (e) {}
-  process.exit();
-});
+process.stdin.on('end', () => process.exit());
 
-/////////////////process.on('uncaughtException', e => console.error(e));
-
-function observe (msg, push, done) {
-  if (msg.cmd === 'version') {
+function observe (request, push, done) {
+  let close;
+  const exception = e => {
     push({
-      version: config.version,
+      type: 'exception',
+      error: e.message
     });
+    close();
+  };
+  close = () => {
+    process.removeListener('uncaughtException', exception);
     done();
-  }
-  if (msg.cmd === 'spec') {
-    push({
-      version: config.version,
+    close = () => {};
+  };
+  process.addListener('uncaughtException', exception);
+
+  if (request.method === 'spec') {
+    push(Object.assign(config, {
       env: process.env,
-      separator: path.sep,
-      tmpdir: os.tmpdir()
-    });
-    done();
+      release: process.release,
+      platform: process.platform,
+      arch: process.arch,
+      versions: process.versions
+    }, {
+      separator: require('path').sep,
+      tmpdir: require('os').tmpdir()
+    }));
+    close();
   }
-  else if (msg.cmd === 'echo') {
-    push(msg);
-    done();
-  }
-  else if (msg.cmd === 'spawn') {
-    if (msg.env) {
-      msg.env.forEach(n => process.env.PATH += path.delimiter + n);
+  else if ('script' in request) {
+    const vm = require('vm');
+    const sandbox = {
+      version: config.version,
+      push,
+      close,
+      // only allow internal modules that extension already requested permission for
+      require: (name) => (request.permissions || []).indexOf(name) === -1 ? null : require(name)
+    };
+    const script = new vm.Script(request.script);
+    const context = new vm.createContext(sandbox);
+    try {
+      script.runInContext(context);
     }
-    let p = Array.isArray(msg.command) ? path.join(...msg.command) : msg.command;
-    let sp = spawn(p, msg.arguments || [], Object.assign({env: process.env}, msg.properties));
-
-    if (msg.kill) {
-      sprocess.push(sp);
-    }
-
-    sp.stdout.on('data', stdout => push({stdout}));
-    sp.stderr.on('data', stderr => push({stderr}));
-    sp.on('close', (code) => {
+    catch (e) {
       push({
-        cmd: msg.cmd,
-        code
-      });
-      done();
-    });
-    sp.on('error', e => {
-      push({
-        code: 1007,
+        type: 'sandbox',
         error: e.message
       });
-      done();
-    });
-  }
-  else if (msg.cmd === 'clean-tmp') {
-    files.forEach(file => {
-      try {
-        fs.unlink(file);
-      }
-      catch (e) {}
-    });
-    files = [];
-    push({
-      code: 0
-    });
-    done();
-  }
-  else if (msg.cmd === 'ifup') {
-    server = http.createServer(function (req, res) {
-      if (req.headers['api-key'] !== msg.key) {
-        res.statusCode = 400;
-        return res.end('HTTP/1.1 400 Bad API Key. Restarting application may fix this.');
-      }
-      if (req.method === 'PUT') {
-        let filename = req.headers['file-path'];
-        if (filename.startsWith('enc:')) {
-          filename = decodeURIComponent(filename.substr(4));
-        }
-        files.push(filename);
-        let file = fs.createWriteStream(filename);
-        req.pipe(file);
-        file.on('finish', () => {
-          file.close(() => {
-            res.statusCode = 200;
-            res.end('File is stored locally');
-          });
-        });
-        file.on('error', (e) => {
-          console.error(e);
-          res.statusCode = 400;
-          res.end('HTTP/1.1 400 Bad Request');
-        });
-      }
-    });
-    server.on('error', (e) => {
-      push({
-        error: e.message,
-        code: 1006
-      });
-      done();
-    });
-    server.listen(msg.port, () => {
-      push({
-        code: 0,
-        msg: 'Server listening on: http://localhost:' + msg.port
-      });
-      done();
-    });
-  }
-  else if (msg.cmd === 'exec') {
-    if (msg.env) {
-      msg.env.forEach(n => process.env.PATH += path.delimiter + n);
+      close();
     }
-    let p = Array.isArray(msg.command) ? path.join(...msg.command) : msg.command;
-    let sp = spawn(p, msg.arguments || [], Object.assign({
-      env: process.env,
-      detached: true
-    }, msg.properties));
-    if (msg.kill) {
-      sprocess.push(sp);
-    }
-    let stderr = '', stdout = '';
-    sp.stdout.on('data', data => stdout += data);
-    sp.stderr.on('data', data => stderr += data);
-    sp.on('close', (code) => {
-      push({
-        code,
-        stderr,
-        stdout
-      });
-      done();
-    });
-  }
-  else if (msg.cmd === 'dir') {
-    fs.readdir(msg.path, (error, files) => {
-      if (error) {
-        push({
-          error: `Cannot open directory; number=${error.errno}, code=${error.code}`,
-          code: 1002
-        });
-      }
-      else {
-        push({
-          files,
-          folders: files.filter(file => fs.statSync(path.join(msg.path, file)).isDirectory()),
-          separator: path.sep
-        });
-      }
-      done();
-    });
-  }
-  else if (msg.cmd === 'env') {
-    push({
-      env: process.env
-    });
-    done();
-  }
-  else if (msg.cmd === 'download') {
-    let file = fs.createWriteStream(msg.filepath);
-    let request = https.get({
-      hostname: msg.hostname,
-      port: msg.port,
-      path: msg.path
-    }, (response) => {
-      let size = parseInt(response.headers['content-length'], 10);
-      response.pipe(file);
-      file.on('finish', () => {
-        if (msg.chmod) {
-          fs.chmodSync(msg.filepath, msg.chmod);
-        }
-        file.close(() => {
-          let s = fs.statSync(msg.filepath).size;
-          push({
-            size,
-            path: msg.filepath,
-            code: s === size ? 0 : 1004,
-            error: s !== size ? `file-size (${s}) does not match the header content-length (${size}).
-              Link: ${msg.hostname}/${msg.path}` : null
-          });
-          done();
-        });
-      });
-    });
-    request.on('error', (err) => {
-      fs.unlink(msg.filepath);
-      push({
-        error: err.message,
-        code: 1001
-      });
-      done();
-    });
-    request.on('socket', function (socket) {
-      socket.setTimeout(msg.timeout || 60000);
-      socket.on('timeout', () => request.abort());
-    });
-  }
-  else if (msg.cmd === 'save-data') {
-    let matches = msg.data.match(/^data:.+\/(.+);base64,(.*)$/);
-    if (matches && matches.length) {
-      let ext = matches[1];
-      let data = matches[2];
-      let buffer = new Buffer(data, 'base64');
-
-      fs.mkdtemp(os.tmpdir(), (err, folder) => {
-        if (err) {
-          push({
-            error: err.message,
-            code: 1007
-          });
-          done();
-        }
-        let file =  path.join(folder, 'image.' + ext);
-        fs.writeFile(file, buffer, (err) => {
-          if (err) {
-            push({
-              error: err.message,
-              code: 1006
-            });
-            done();
-          }
-          else {
-            push({
-              code: 0,
-              file
-            });
-            done();
-          }
-        });
-      });
-    }
-    else {
-      push({
-        error: 'cannot parse data-uri',
-        code: 1005
-      });
-      done();
-    }
-  }
-  else if (msg.cmd === 'net') {
-    let stdout = '';
-    let connection = net.connect({
-      port: msg.port,
-      host: msg.host,
-      persistent: false
-    });
-    connection.on('end', () => {
-      push(stdout);
-      done();
-    });
-    connection.on('data', (data) => {
-      data = data.toString();
-      stdout += data;
-    });
-    msg.commands.forEach(cmd => connection.write(cmd));
-  }
-  else if (msg.cmd === 'copy') {
-    let cbCalled = false;
-    let end = (error) => {
-      if (cbCalled === false) {
-        push(error ? {
-          error,
-          code: 1010
-        } : {
-          code: 0,
-          target: msg.target
-        });
-        done();
-        cbCalled = true;
-      }
-    };
-    let rd = fs.createReadStream(msg.source);
-    rd.on('error', e => end(e));
-    let wr = fs.createWriteStream(msg.target);
-    wr.on('error', e => end(e));
-    wr.on('finish', () => {
-      if (msg.chmod) {
-        fs.chmodSync(msg.target, msg.chmod);
-      }
-      if (msg.delete) {
-        fs.unlink(msg.source, (error) => {
-          if (error) {
-            return end(error);
-          }
-          end();
-        });
-      }
-      else {
-        end();
-      }
-    });
-    rd.pipe(wr);
-  }
-  else if (msg.cmd === 'remove') {
-    let unlink = (file) => {
-      return new Promise((resolve, reject) => {
-        fs.unlink(file, (error) => {
-          if (error) {
-            return reject(error);
-          }
-          resolve();
-        });
-      });
-    };
-    Promise.all(msg.files.map(file => unlink(file))).then(
-      () => {
-        push({
-          code: 0
-        });
-        done();
-      },
-      (error) => {
-        push({
-          error,
-          code: 1011
-        });
-        done();
-      }
-    );
   }
   else {
     push({
-      error: 'cmd is unknown',
-      cmd: msg.cmd,
-      code: 1000
+      type: 'context',
+      error: 'cannot find "script" key in your request. Closing connection...'
     });
-    done();
+    close();
   }
 }
 /* message passing */
 var nativeMessage = require('./messaging');
-
-var input = new nativeMessage.Input();
-var transform = new nativeMessage.Transform(observe);
-var output = new nativeMessage.Output();
-
 process.stdin
-    .pipe(input)
-    .pipe(transform)
-    .pipe(output)
-    .pipe(process.stdout);
+  .pipe(new nativeMessage.Input())
+  .pipe(new nativeMessage.Transform(observe))
+  .pipe(new nativeMessage.Output())
+  .pipe(process.stdout);

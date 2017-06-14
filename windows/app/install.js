@@ -15,8 +15,8 @@ function exists (directory, callback) {
   });
 }
 
-var dir = path.join(process.argv[2], 'com.add0n.node');
-var name = 'com.add0n.node';
+var dir = path.join(process.argv[2], 'com.add0n.stylus');
+var name = 'com.add0n.stylus';
 var ids = require('./config.js').ids;
 
 function manifest (type, callback) {
@@ -52,7 +52,6 @@ function application (callback) {
     }
     fs.createReadStream('host.js').pipe(fs.createWriteStream(path.join(dir, 'host.js')));
     fs.createReadStream('messaging.js').pipe(fs.createWriteStream(path.join(dir, 'messaging.js')));
-    fs.createReadStream('follow-redirects.js').pipe(fs.createWriteStream(path.join(dir, 'follow-redirects.js')));
     try {
       fs.createReadStream('..\\node.exe').pipe(fs.createWriteStream(path.join(dir, 'node.exe')));
     } catch (e) {}
