@@ -1,7 +1,7 @@
 'use strict';
 
 var config = {
-  version: '0.1.0'
+  version: '0.1.2'
 };
 // closing node when parent process is killed
 process.stdin.resume();
@@ -40,6 +40,7 @@ function observe (request, push, done) {
     const vm = require('vm');
     const sandbox = {
       version: config.version,
+      env: process.env,
       push,
       close,
       // only allow internal modules that extension already requested permission for
