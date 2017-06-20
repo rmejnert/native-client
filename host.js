@@ -1,7 +1,7 @@
 'use strict';
 
 var config = {
-  version: '0.1.2'
+  version: '0.1.3'
 };
 // closing node when parent process is killed
 process.stdin.resume();
