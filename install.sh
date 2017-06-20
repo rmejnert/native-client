@@ -14,4 +14,3 @@ else
     ../node/x86/node install.js --add_node $1
   fi
 fi
-

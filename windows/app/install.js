@@ -15,9 +15,19 @@ function exists (directory, callback) {
   });
 }
 
-var dir = path.join(process.argv[2], 'com.add0n.stylus');
-var name = 'com.add0n.stylus';
-var ids = require('./config.js').ids;
+var {id, ids} = require('./config.js');
+var dir = path.join(process.argv[2], id);
+var name = id;
+
+var {exec} = require('child_process');
+
+console.log('.. Writting to Chrome Registry');
+console.log(`.. Key: HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\${id}`);
+exec(`REG ADD "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\${id}" /ve /t REG_SZ /d "%LocalAPPData%\\${id}\\manifest-chrome.json" /f`);
+
+console.log(`.. Writting to Firefox Registry`);
+console.log(`.. Key: HKCU\\SOFTWARE\\Mozilla\\NativeMessagingHosts\\${id}`);
+exec(`REG ADD "HKCU\\SOFTWARE\\Mozilla\\NativeMessagingHosts\\${id}" /ve /t REG_SZ /d "%LocalAPPData%\\${id}\\manifest-firefox.json" /f`);
 
 function manifest (type, callback) {
   exists(dir, (e) => {

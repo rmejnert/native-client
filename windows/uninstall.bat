@@ -1,17 +1,28 @@
 @echo off
 
+pushd "%~dp0"
+CD app
+
+IF "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+  FOR /f %%i in ('..\node\x64\node.exe -e "process.stdout.write(require('./config.js').id)"') do SET id=%%i
+) ELSE (
+  FOR /f %%i in ('..\node\x86\node.exe -e "process.stdout.write(require('./config.js').id)"') do SET id=%%i
+)
+
+echo sss%id%
+
 echo .. Deleting Chrome Registry
-REG DELETE "HKCU\Software\Google\Chrome\NativeMessagingHosts\com.add0n.stylus" /f
+REG DELETE "HKCU\Software\Google\Chrome\NativeMessagingHosts\%id%" /f
 
 echo .. Deleting Firefox Registry
 for %%f in ("%LocalAPPData%") do SET SHORT_PATH=%%~sf
-REG DELETE "HKCU\SOFTWARE\Mozilla\NativeMessagingHosts\com.add0n.stylus" /f
+REG DELETE "HKCU\SOFTWARE\Mozilla\NativeMessagingHosts\%id%" /f
 
-echo .. Deleting com.add0n.stylus
-RMDIR /Q /S "%LocalAPPData%\com.add0n.stylus"
+echo .. Deleting %id%
+RMDIR /Q /S "%LocalAPPData%\%id%"
 
 echo.
-echo ^>^>^> Done! ^<^<^<
+echo ^>^>^> Native Client is removed ^<^<^<
 echo.
 pause
 

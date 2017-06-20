@@ -40,9 +40,9 @@ function exists (directory, callback) {
   one();
 }
 
-var dir = path.join(share, 'com.add0n.stylus');
-var name = 'com.add0n.stylus';
-var ids = require('./config.js').ids;
+var {id, ids} = require('./config.js');
+var dir = path.join(share, id);
+var name = id;
 
 function manifest (root, type, callback) {
   console.log(' -> Creating a directory at', root);
