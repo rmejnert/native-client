@@ -1,13 +1,13 @@
 'use strict';
 
-exports.id = 'com.add0n.stylus';
+exports.id = 'com.add0n.native-client';
 
 exports.ids = {
   chrome: [
-    'hhdaknihlbgjoaiaceldhnbbmogabcpk', // Stylus External Editor Integration (Chrome)
-    'bfkhfaldfclkfjdmgfibhknpoiaoelih', // Stylus External Editor Integration (Opera)
+    'hfckgfbhdacemicpjljhfbjmkiggeche', // Send to VLC (Chrome)
+    'hgadfjhoalnaidfdoilgeimnolhcodbc', // Send to VLC (Opera)
   ],
   firefox: [
-    '95fce6c2e847856344b2156491239d95f56c7fc1@temporary-addon', // Stylus External Editor Integration
+    '{3e0ac434-26e0-4c03-b757-3078486800c3}', // Send to VLC
   ]
 };
