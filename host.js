@@ -1,8 +1,7 @@
 'use strict';
 
-var config = {
-  version: '0.1.3'
-};
+var config = require('./config.js');
+
 // closing node when parent process is killed
 process.stdin.resume();
 process.stdin.on('end', () => process.exit());
@@ -24,16 +23,16 @@ function observe (request, push, done) {
   process.addListener('uncaughtException', exception);
 
   if (request.method === 'spec') {
-    push(Object.assign(config, {
+    push({
+      version: config.version,
       env: process.env,
       release: process.release,
       platform: process.platform,
       arch: process.arch,
-      versions: process.versions
-    }, {
+      versions: process.versions,
       separator: require('path').sep,
       tmpdir: require('os').tmpdir()
-    }));
+    });
     close();
   }
   else if ('script' in request) {
@@ -43,6 +42,7 @@ function observe (request, push, done) {
       env: process.env,
       push,
       close,
+      args: request.args,
       // only allow internal modules that extension already requested permission for
       require: (name) => (request.permissions || []).indexOf(name) === -1 ? null : require(name)
     };
