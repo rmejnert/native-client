@@ -97,6 +97,7 @@ function application (callback) {
         fs.chmodSync(path.join(dir, 'node'), '0755');
       }
       fs.createReadStream('host.js').pipe(fs.createWriteStream(path.join(dir, 'host.js')));
+      fs.createReadStream('config.js').pipe(fs.createWriteStream(path.join(dir, 'config.js')));
       fs.createReadStream('messaging.js').pipe(fs.createWriteStream(path.join(dir, 'messaging.js')));
 
       callback();
