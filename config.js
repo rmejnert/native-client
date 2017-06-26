@@ -1,14 +1,17 @@
 'use strict';
 
 exports.id = 'com.add0n.native_client';
-exports.version = '0.1.4';
+exports.version = '0.1.5';
 
 exports.ids = {
   chrome: [
     'hfckgfbhdacemicpjljhfbjmkiggeche', // Send to VLC (Chrome)
     'hgadfjhoalnaidfdoilgeimnolhcodbc', // Send to VLC (Opera)
+    'nlbhcidbelfhbpglaaoljbfpfpdkpdcg', // Download with IDM (Chrome)
+    'kajaikkhnmegmfnlifeklklaienhdekb', // Download with IDM (Opera)
   ],
   firefox: [
     '{3e0ac434-26e0-4c03-b757-3078486800c3}', // Send to VLC
+    '{d1646fcf-76ad-49c5-b8b2-e496e9b71189}', // Download with IDM
   ]
 };
