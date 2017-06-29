@@ -1,7 +1,7 @@
 'use strict';
 
 exports.id = 'com.add0n.native_client';
-exports.version = '0.1.6';
+exports.version = '0.1.7';
 
 exports.ids = {
   chrome: [
