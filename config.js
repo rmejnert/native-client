@@ -11,6 +11,8 @@ exports.ids = {
     'kajaikkhnmegmfnlifeklklaienhdekb', // Download with IDM (Opera)
     'jlodlegnpjplclncjkgolcmdhjmlokna', // Download with FDM (Chrome)
     'iidhcgjgmjodnfbghbgpdnhiajbmgcjo', // Download with FDM (Opera)
+    'jfpmbokkdeapjommajdfmmheiiakdlgo', // Download with JDownloader (Chrome)
+    'jjbbcngfknmgdlekfofhaagmogeifbpc', // Download with JDownloader (Opera)
   ],
   firefox: [
     '{3e0ac434-26e0-4c03-b757-3078486800c3}', // Send to VLC
