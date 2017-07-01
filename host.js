@@ -42,6 +42,7 @@ function observe (request, push, done) {
       env: process.env,
       push,
       close,
+      setTimeout,
       args: request.args,
       // only allow internal modules that extension already requested permission for
       require: (name) => (request.permissions || []).indexOf(name) === -1 ? null : require(name)
