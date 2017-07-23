@@ -18,7 +18,6 @@ exports.ids = {
     'ekeecmblpnobdaijmfkcfcnofopooipg', // Download with DAP (Opera)
     'jplcfomghgpjlgglocndioeceojhoika', // Download with Wget (Chrome)
     'cmddfbnhpokddncdalabdlmdckcdmboh', // Download with Wget (Opera)
-    'gnfbhaljcgjknnpflfoinlbljfbkeogl', // TEST
   ],
   firefox: [
     '{3e0ac434-26e0-4c03-b757-3078486800c3}', // Send to VLC
