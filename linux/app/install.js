@@ -1,3 +1,4 @@
+/* globals require, process */
 'use strict';
 
 var fs = require('fs');
@@ -10,17 +11,17 @@ if (share[0] === '~') {
 share = path.resolve(share);
 console.log(' -> Root directory is', share);
 
-function exists (directory, callback) {
+function exists(directory, callback) {
   let root = '/';
-  let dirs = directory.split('/');
-  function one () {
+  const dirs = directory.split('/');
+  function one() {
     root = path.join(root, dirs.shift());
-    fs.stat(root, (e) => {
+    fs.stat(root, e => {
       if (!e && dirs.length) {
         one();
       }
       else if (e && e.code === 'ENOENT') {
-        fs.mkdir(root, (e) => {
+        fs.mkdir(root, e => {
           if (e) {
             callback(e);
           }
@@ -44,9 +45,9 @@ var {id, ids} = require('./config.js');
 var dir = path.join(share, id);
 var name = id;
 
-function manifest (root, type, callback) {
+function manifest(root, type, callback) {
   console.log(' -> Creating a directory at', root);
-  exists(root, (e) => {
+  exists(root, e => {
     if (e) {
       throw e;
     }
@@ -63,28 +64,27 @@ function manifest (root, type, callback) {
   "path": "${path.join(dir, 'run.sh')}",
   "type": "stdio",
   ${origins}
-  }`, (e) => {
+  }`, e => {
       if (e) {
         throw e;
       }
       callback();
     });
-
   });
 }
-function application (callback) {
+function application(callback) {
   console.log(' -> Creating a directory at', dir);
-  exists(dir, (e) => {
+  exists(dir, e => {
     if (e) {
-      console.log('\x1b[31m', `-> You dont have permission to use "${share}" directory.` ,'\x1b[0m');
-      console.log('\x1b[31m', '-> Use custom directory instead. Example:' ,'\x1b[0m');
-      console.log('\x1b[31m', '-> ./install.sh --custom-dir=~/' ,'\x1b[0m');
+      console.log('\x1b[31m', `-> You dont have permission to use "${share}" directory.`, '\x1b[0m');
+      console.log('\x1b[31m', '-> Use custom directory instead. Example:', '\x1b[0m');
+      console.log('\x1b[31m', '-> ./install.sh --custom-dir=~/', '\x1b[0m');
 
       throw e;
     }
-    let isNode = process.argv.filter(a => a === '--add_node').length === 0;
-    let run = isNode ? `#!/bin/bash\n${process.argv[2]} host.js` : '#!/bin/bash\n./node host.js';
-    fs.writeFile(path.join(dir, 'run.sh'), run, (e) => {
+    const isNode = process.argv.filter(a => a === '--add_node').length === 0;
+    const run = `#!/bin/bash\n${isNode ? process.argv[0] : './node'} host.js`;
+    fs.writeFile(path.join(dir, 'run.sh'), run, e => {
       if (e) {
         throw e;
       }
@@ -93,16 +93,16 @@ function application (callback) {
       fs.createReadStream('config.js').pipe(fs.createWriteStream(path.join(dir, 'config.js')));
       fs.createReadStream('messaging.js').pipe(fs.createWriteStream(path.join(dir, 'messaging.js')));
       if (!isNode) {
-        fs.createReadStream('../node').pipe(fs.createWriteStream(path.join(dir, 'node')));
+        fs.createReadStream(process.argv[0]).pipe(fs.createWriteStream(path.join(dir, 'node')));
         fs.chmodSync(path.join(dir, 'node'), '0755');
       }
       callback();
     });
   });
 }
-function chrome (callback) {
+function chrome(callback) {
   if (ids.chrome.length) {
-    let loc = path.join(
+    const loc = path.join(
       process.env.HOME,
       '.config/google-chrome/NativeMessagingHosts'
     );
@@ -113,9 +113,9 @@ function chrome (callback) {
     callback();
   }
 }
-function chromium (callback) {
+function chromium(callback) {
   if (ids.chrome.length) {
-    let loc = path.join(
+    const loc = path.join(
       process.env.HOME,
       '.config/chromium/NativeMessagingHosts'
     );
@@ -126,9 +126,9 @@ function chromium (callback) {
     callback();
   }
 }
-function firefox (callback) {
+function firefox(callback) {
   if (ids.firefox.length) {
-    let loc = path.join(
+    const loc = path.join(
       process.env.HOME,
       '.mozilla/native-messaging-hosts'
     );

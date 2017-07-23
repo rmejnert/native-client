@@ -1,7 +1,8 @@
+/* globals exports */
 'use strict';
 
 exports.id = 'com.add0n.native_client';
-exports.version = '0.2.0';
+exports.version = '0.2.1';
 
 exports.ids = {
   chrome: [
@@ -17,11 +18,7 @@ exports.ids = {
     'ekeecmblpnobdaijmfkcfcnofopooipg', // Download with DAP (Opera)
     'jplcfomghgpjlgglocndioeceojhoika', // Download with Wget (Chrome)
     'cmddfbnhpokddncdalabdlmdckcdmboh', // Download with Wget (Opera)
-    'ldfomoghaelkilaebmhmnlnnkjamjghc', // Test
-    'kadfidnbomjnmeachblcjmgnjnchaefp', // Test
-    'cbgnbkhlkpojncoeoedigggbdmijpmba', // Test
-    'ngccmghgagpmafbdbgbgnidlfmjnceac', // Test
-    'enieldblbknedpgjcfmhdeflgolebdma', // Test
+    'gnfbhaljcgjknnpflfoinlbljfbkeogl', // TEST
   ],
   firefox: [
     '{3e0ac434-26e0-4c03-b757-3078486800c3}', // Send to VLC

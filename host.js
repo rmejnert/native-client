@@ -1,3 +1,4 @@
+/* globals require, process */
 'use strict';
 
 var config = require('./config.js');
@@ -6,12 +7,13 @@ var config = require('./config.js');
 process.stdin.resume();
 process.stdin.on('end', () => process.exit());
 
-function observe (request, push, done) {
+function observe(request, push, done) {
   let close;
   const exception = e => {
     push({
+      code: -1,
       type: 'exception',
-      error: e.message
+      error: e.stack
     });
     close();
   };
@@ -45,7 +47,7 @@ function observe (request, push, done) {
       setTimeout,
       args: request.args,
       // only allow internal modules that extension already requested permission for
-      require: (name) => (request.permissions || []).indexOf(name) === -1 ? null : require(name)
+      require: name => (request.permissions || []).indexOf(name) === -1 ? null : require(name)
     };
     const script = new vm.Script(request.script);
     const context = new vm.createContext(sandbox);
