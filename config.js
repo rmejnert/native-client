@@ -2,7 +2,7 @@
 'use strict';
 
 exports.id = 'com.add0n.native_client';
-exports.version = '0.2.6';
+exports.version = '0.2.7';
 
 exports.ids = {
   chrome: [
@@ -24,6 +24,8 @@ exports.ids = {
     'cmddfbnhpokddncdalabdlmdckcdmboh', // Download with Wget (Opera)
     'eiejadjdcchfommckmikpcdnihljbpai', // Edit with Sublime Text (Chrome)
     'odbhmaaphiednnbgfionolmpkdplpilc', // Edit with Sublime Text (Opera)
+    'jlghbmcdkfddnihedhlnmggjbfjcppng', // Send to MPV (Chrome)
+    'dbghnkdojpkebjbddhhjfjgapoolnikh', // Send to MPV (Opera)
   ],
   firefox: [
     '{3e0ac434-26e0-4c03-b757-3078486800c3}', // Send to VLC
@@ -33,5 +35,6 @@ exports.ids = {
     '{1fb1ffdc-b95d-451e-be52-7303adf9a0d3}', // Download with FDM
     '{533953f8-ffb6-421c-af1a-5a02a792ab51}', // Download with Wget
     '{5510b212-951a-439c-ae73-b1ebbc68055f}', // Edit with Sublime Text
+    '{ccad95df-add6-4d8a-aa5c-cdc384075bab}', // Send to MPV
   ]
 };
