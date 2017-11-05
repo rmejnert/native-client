@@ -19,7 +19,7 @@ rm ~/Library/Application\ Support/Chromium/NativeMessagingHosts/${id}.json
 echo " .. Removing manifest file for Mozilla Firefox"
 rm ~/Library/Application\ Support/Mozilla/NativeMessagingHosts/${id}.json
 echo " .. Removing executable"
-rm -r ~/.config/${id}
+[ -n "$id" ] && rm -r ~/.config/${id}
 
 echo
 echo ">>> Native Client is removed <<<".
