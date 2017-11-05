@@ -3,9 +3,19 @@
 cd ./app
 
 MACHINE_TYPE=`uname -m`
-if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+
+which node 2>/dev/null
+isNode=$?
+echo NodeJS status = $isNode
+
+if [ ${isNode} -eq 0 ]; then
+  echo "Using system NodeJS"
+  id=`node -e "process.stdout.write(require('./config.js').id)"`
+elif [ ${MACHINE_TYPE} == 'x86_64' ]; then
+  echo "Using ../node/x64/node"
   id=`../node/x64/node -e "process.stdout.write(require('./config.js').id)"`
 else
+  echo "Using ../node/x86/node"
   id=`../node/x86/node -e "process.stdout.write(require('./config.js').id)"`
 fi
 
