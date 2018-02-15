@@ -2,7 +2,7 @@
 'use strict';
 
 exports.id = 'com.add0n.native_client';
-exports.version = '0.3.7';
+exports.version = '0.3.8';
 
 exports.ids = {
   chrome: [
@@ -22,6 +22,8 @@ exports.ids = {
     'ekeecmblpnobdaijmfkcfcnofopooipg', // Download with DAP (Opera)
     'jplcfomghgpjlgglocndioeceojhoika', // Download with Wget (Chrome)
     'cmddfbnhpokddncdalabdlmdckcdmboh', // Download with Wget (Opera)
+    'gecfhmlaldelfoeahjahajoooenmnlnd', // Download with FlashGet (Opera)
+    'eadfknilcdakacgehgfoedimdghaedgi', // Download with FlashGet (Opera)
     'eiejadjdcchfommckmikpcdnihljbpai', // Edit with Sublime Text (Chrome)
     'odbhmaaphiednnbgfionolmpkdplpilc', // Edit with Sublime Text (Opera)
     'gpmjpkmohjgaimfhebdjebpgdnpcadji', // Edit with Notepad++ (Chrome)
@@ -38,6 +40,7 @@ exports.ids = {
     '{cfd8df21-e05f-46e9-8ea1-af5e5177d492}', // Download with DAP
     '{1fb1ffdc-b95d-451e-be52-7303adf9a0d3}', // Download with FDM
     '{533953f8-ffb6-421c-af1a-5a02a792ab51}', // Download with Wget
+    '{48f5395d-5c00-41cd-9a5e-fd2f8d9b74c2}', // Download with FlashGet
     '{533953f8-ffb6-421c-af1a-5a02a792ab51}', // Download with JDownloader
     '{03e07985-30b0-4ae0-8b3e-0c7519b9bdf6}', // Edit with Sublime Text
     '{f91bc9ee-ae11-4850-8e6b-ed4b0262ce3b}', // Edit with Notepad++
