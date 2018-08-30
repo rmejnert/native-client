@@ -2,7 +2,7 @@
 'use strict';
 
 exports.id = 'com.add0n.native_client';
-exports.version = '0.3.8';
+exports.version = '0.3.9';
 
 exports.ids = {
   chrome: [
@@ -30,6 +30,7 @@ exports.ids = {
     'hfgnckeamhbkolmfeaieemklhejdcmai', // Edit with Notepad++ (Opera)
     'jlghbmcdkfddnihedhlnmggjbfjcppng', // Send to MPV (Chrome)
     'dbghnkdojpkebjbddhhjfjgapoolnikh', // Send to MPV (Opera)
+    'kidfgoobhdhbcclbdcjlmkkednaelojc', // TEST
   ],
   firefox: [
     '{3e0ac434-26e0-4c03-b757-3078486800c3}', // Send to VLC
@@ -42,7 +43,7 @@ exports.ids = {
     '{533953f8-ffb6-421c-af1a-5a02a792ab51}', // Download with Wget
     '{48f5395d-5c00-41cd-9a5e-fd2f8d9b74c2}', // Download with FlashGet
     '{533953f8-ffb6-421c-af1a-5a02a792ab51}', // Download with JDownloader
-    '{03e07985-30b0-4ae0-8b3e-0c7519b9bdf6}', // Edit with Sublime Text
+    '{5510b212-951a-439c-ae73-b1ebbc68055f}', // Edit with Sublime Text
     '{f91bc9ee-ae11-4850-8e6b-ed4b0262ce3b}', // Edit with Notepad++
   ]
 };
